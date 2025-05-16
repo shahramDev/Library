@@ -1,3 +1,9 @@
 {
-
+    "shahram": {
+        "password": "@BYSHAHRAM1384",
+        "userAccess": {
+            "isAdmin": false
+        },
+        "userId": 1000000
+    }
 }

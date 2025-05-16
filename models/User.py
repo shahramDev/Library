@@ -30,3 +30,9 @@ class User:
         with self.lock:
             with open(self.database, 'w') as database:
                 json.dump(self.users, database, indent=4)
+
+    def signUp(self):
+        self.load()
+        with self.lock:
+            self.user["userId"] = 1000000 + len(self.users)
+            self.save()
