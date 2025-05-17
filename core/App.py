@@ -33,6 +33,7 @@ class App:
         userController = UserController()
         try:
             userController.getUser(userName).checkUser(password)
+            self.userName = userName
             response = self.mainMenu()
             if response == 'back':
                 return self.signIn()
@@ -52,21 +53,25 @@ class App:
         userController = UserController()
         try:
             userController.signUp(userName,password)
-            return self.getName(userController)
+            self.userName = userName
+            return self.getName()
         except UsernameAlreadyExistsError as e:
             return self.signUp("❌ Username already exists")
         except InvalidUserNameError as e:
             return self.signUp("❌ Invalid username\nUsername must be 4 to 12 characters and contain only letters, digits, or underscores\n")
         except InvalidPasswordError as e:
             return self.signUp("❌ Invalid password Password must be 8 to 20 characters, and contain at least one digit and one letter.\n")
-    def getName(self,User):
+    def getName(self):
         userInput = input("For continuing you've to set your name and lastname(optional) or send back to get to the first page\nwrite them in this format\nname lastname(optional)\n")
         if userInput == 'back':
             return 'back'
         else:
             userInfo = userInput.split()
             if len(userInfo) in [1,2] and all(list(map(lambda text: re.fullmatch(r'\w{3,9}',text),userInfo))):
-                return self.mainMenu(User)
-            return self.getName(User)
-    def mainMenu(self,User):
-        pass
+                userController = UserController()
+                UserController.setName(self.userName,userInfo)
+                return self.mainMenu()
+            return self.getName()
+    def mainMenu(self):
+        user = UserController().getUser(self.userName).user
+        print(f"Hi dear {user['name'] + ' ' + user['lastName'] if user.get('lastName') else user['name']}")
