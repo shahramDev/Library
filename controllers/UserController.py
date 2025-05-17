@@ -39,3 +39,10 @@ class UserController:
             raise InvalidPasswordError("❌ Password must include at least one letter.")
         if not re.search(r'\d', password):
             raise InvalidPasswordError("❌ Password must include at least one digit.")      
+    def setName(userName,userInfo):
+        user = User(userName)
+        if len(userInfo) == 1:
+            userInfo.append(None)
+        user.getUser()
+        [user.user["name"],user.user["lastName"]] = userInfo
+        user.save()
