@@ -1,5 +1,5 @@
 from models.User import User
-from core.ErrorHandling import UserNotFoundError ,InvalidCredentialsError,UsernameAlreadyExistsError ,InvalidPasswordError ,InvalidUserNameError
+from core.ErrorHandling import UserNotFoundError ,InvalidCredentialsError,UsernameAlreadyExistsError ,InvalidPasswordError ,InvalidUserNameError ,InvalidNameOrLastNameError
 
 import re
 
@@ -40,6 +40,8 @@ class UserController:
         if not re.search(r'\d', password):
             raise InvalidPasswordError("❌ Password must include at least one digit.")      
     def setName(userName,userInfo):
+        if not len(userInfo) in [1,2] or not all(list(map(lambda text: re.fullmatch(r'\w{3,15}',text),userInfo))):
+            raise InvalidNameOrLastNameError("name or last name has wrong syntax")
         user = User(userName)
         if len(userInfo) == 1:
             userInfo.append(None)
