@@ -3,6 +3,8 @@ from controllers.AdminController import AdminController
 from controllers.BookController import BookController
 from core.ErrorHandling import UserNotFoundError ,InvalidCredentialsError,UsernameAlreadyExistsError ,InvalidPasswordError ,InvalidUserNameError
 
+import re
+
 class App:
     def start(self):
         userChoice = input("For continuing you need to sign in or sign up\n1- sign in\n2- sign up\n3- exit\nsend the number of your choice\n")
@@ -45,19 +47,26 @@ class App:
             return 'back'
         userInfo = userInput.split()
         if len(userInfo) != 2:
-            return self.signIn("make sure you're correct and try again. write your data in this format\nusername password\n")
+            return self.signUp("make sure you're correct and try again. write your data in this format\nusername password\n")
         userName , password = userInfo
         userController = UserController()
         try:
             userController.signUp(userName,password)
-            return 
+            return self.getName(userController)
         except UsernameAlreadyExistsError as e:
             return self.signUp("❌ Username already exists")
         except InvalidUserNameError as e:
             return self.signUp("❌ Invalid username\nUsername must be 4 to 12 characters and contain only letters, digits, or underscores\n")
         except InvalidPasswordError as e:
             return self.signUp("❌ Invalid password Password must be 8 to 20 characters, and contain at least one digit and one letter.\n")
-    def getName(self):
+    def getName(self,User):
+        userInput = input("For continuing you've to set your name and lastname(optional) or send back to get to the first page\nwrite them in this format\nname lastname(optional)\n")
+        if userInput == 'back':
+            return 'back'
+        else:
+            userInfo = userInput.split()
+            if len(userInfo) in [1,2] and all(list(map(lambda text: re.fullmatch(r'\w{3,9}',text),userInfo))):
+                return self.mainMenu(User)
+            return self.getName(User)
+    def mainMenu(self,User):
         pass
-    def mainMenu(self):
-        return input()

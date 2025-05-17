@@ -24,6 +24,7 @@ class UserController:
             userData.user["userAccess"] = dict()
             userData.user["userAccess"]["isAdmin"] = False
             userData.signUp()
+            return userData
     def validate(self, userName, password):
         self.validateUserName(userName)
         self.validatePassword(password)
