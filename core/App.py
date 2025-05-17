@@ -1,9 +1,7 @@
 from controllers.UserController import UserController
 from controllers.AdminController import AdminController
 from controllers.BookController import BookController
-from core.ErrorHandling import UserNotFoundError ,InvalidCredentialsError,UsernameAlreadyExistsError ,InvalidPasswordError ,InvalidUserNameError
-
-import re
+from core.ErrorHandling import UserNotFoundError ,InvalidCredentialsError,UsernameAlreadyExistsError ,InvalidPasswordError ,InvalidUserNameError ,InvalidNameOrLastNameError
 
 class App:
     def start(self):
@@ -61,17 +59,22 @@ class App:
             return self.signUp("❌ Invalid username\nUsername must be 4 to 12 characters and contain only letters, digits, or underscores\n")
         except InvalidPasswordError as e:
             return self.signUp("❌ Invalid password Password must be 8 to 20 characters, and contain at least one digit and one letter.\n")
-    def getName(self):
-        userInput = input("For continuing you've to set your name and lastname(optional) or send back to get to the first page\nwrite them in this format\nname lastname(optional)\n")
+    def getName(self,text="For continuing you've to set your name and lastname(optional) or send back to get to the first page\nwrite them in this format\nname lastname(optional) each one should be from 3 to 15 characters\n"):
+        userInput = input(text)
         if userInput == 'back':
             return 'back'
         else:
             userInfo = userInput.split()
-            if len(userInfo) in [1,2] and all(list(map(lambda text: re.fullmatch(r'\w{3,9}',text),userInfo))):
-                userController = UserController()
+            try:
                 UserController.setName(self.userName,userInfo)
                 return self.mainMenu()
-            return self.getName()
+            except InvalidNameOrLastNameError as e:
+                return self.getName(e+"\n")
     def mainMenu(self):
         user = UserController().getUser(self.userName).user
-        print(f"Hi dear {user['name'] + ' ' + user['lastName'] if user.get('lastName') else user['name']}")
+        try:
+            name = user['name']
+            lastName = user['lastName']
+        except KeyError:
+            return self.getName()
+        print(f"Hi dear {name + ' ' + lastName if user.get('lastName') is not None else name}")
