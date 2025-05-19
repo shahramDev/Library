@@ -52,14 +52,14 @@ class App:
         try:
             userController.signUp(userName,password)
             self.userName = userName
-            return self.getName()
+            return self.setName()
         except UsernameAlreadyExistsError as e:
             return self.signUp("❌ Username already exists")
         except InvalidUserNameError as e:
             return self.signUp("❌ Invalid username\nUsername must be 4 to 12 characters and contain only letters, digits, or underscores\n")
         except InvalidPasswordError as e:
             return self.signUp("❌ Invalid password Password must be 8 to 20 characters, and contain at least one digit and one letter.\n")
-    def getName(self,text="For continuing you've to set your name and lastname(optional) or send back to get to the first page\nwrite them in this format\nname lastname(optional) each one should be from 3 to 15 characters\n"):
+    def setName(self,text="For continuing you've to set your name and lastname(optional) or send back to get to the first page\nwrite them in this format\nname lastname(optional) each one should be from 3 to 15 characters\n"):
         userInput = input(text)
         if userInput == 'back':
             return 'back'
@@ -69,12 +69,32 @@ class App:
                 UserController.setName(self.userName,userInfo)
                 return self.mainMenu()
             except InvalidNameOrLastNameError as e:
-                return self.getName(e+"\n")
+                return self.setName(e+"\n")
     def mainMenu(self):
         user = UserController().getUser(self.userName).user
         try:
             name = user['name']
             lastName = user['lastName']
         except KeyError:
-            return self.getName()
+            return self.setName()
         print(f"Hi dear {name + ' ' + lastName if user.get('lastName') is not None else name}")
+        userChoice = input("Please choose a command from the list below:\n1. Show my books\n2. Profile\n3. MemberShip\n4. settings\n5. Log out\nEnter the number of your choice:\n")
+        match userChoice:
+            case '1':
+                return self.showMyBooks()
+            case '2':
+                return self.profile()
+            case '3':
+                return self.membership()
+            case '4':
+                return self.settings()
+            case '5':
+                return
+    def showMyBooks(self):
+        pass
+    def profile(self):
+        pass
+    def membership(self):
+        pass
+    def settings(self):
+        pass
