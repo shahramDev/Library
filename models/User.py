@@ -2,7 +2,7 @@ from filelock import FileLock
 import json
 import os
 from datetime import datetime
-from core.ErrorHandling import UsernameAlreadyExistsError 
+import bcrypt
 
 class User:
 
@@ -42,7 +42,7 @@ class User:
             return None
         user = User(userName)
         data = {
-            "password": password,
+            "password": bcrypt.hashpw(password.encode(),bcrypt.gensalt()),
             "userId": 1000000 + len(users),
             "name": None,
             "lastName": None,
@@ -84,15 +84,11 @@ class User:
 
     @password.setter
     def password(self, value):
-        self.user["password"] = value
+        self.user["password"] = bcrypt.hashpw(value.encode(),bcrypt.gensalt())
 
     @property
     def userId(self):
         return self.user["userId"]
-
-    @userId.setter
-    def userId(self, value):
-        self.user["userId"] = value
 
     @property
     def name(self):
