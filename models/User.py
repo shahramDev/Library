@@ -39,7 +39,7 @@ class User:
     def createUser(cls, userName, password):
         users = cls.loadUsers()
         if userName in users:
-            return False
+            return None
         user = User(userName)
         data = {
             "password": password,
