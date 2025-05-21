@@ -1,37 +1,40 @@
 from models.User import User
-from core.ErrorHandling import UserNotFoundError ,InvalidCredentialsError,UsernameAlreadyExistsError ,InvalidPasswordError ,InvalidUserNameError ,InvalidNameOrLastNameError
-
+from core.ErrorHandling import( 
+    UserNotFoundError ,
+    InvalidCredentialsError,
+    UsernameAlreadyExistsError,
+    InvalidPasswordError,
+    InvalidUserNameError,
+    InvalidNameOrLastNameError
+)
 import re
 
 class UserController:
-    def getUser(self,userName):
-        userData = User(userName).getUser().user
-        if userData is None:
+
+    def __init__(self,user):
+        self.user = user
+
+    @classmethod
+    def getUser(cls,userName):
+        user = User.getUser(userName)
+        if user is None:
             raise UserNotFoundError('User does not exist.')
-        self.user = userData
-        return self
-    def checkUser(self,password):
-        if self.user["password"] != password:
+        return cls(user)
+    
+    def checkPassword(self,password):
+        if self.user.password != password:
             raise InvalidCredentialsError('password is wrong')
-        return True
-    def signUp(self,userName,password):
-        userData = User(userName)
-        if userData.getUser().user is not None:
-            raise UsernameAlreadyExistsError('this user already exists')
-        if self.validate(userName,password):
-            userData.user = dict()
-            userData.user["password"] = password
-            userData.user["userAccess"] = dict()
-            userData.user["userAccess"]["isAdmin"] = False
-            userData.signUp()
-            return userData
-    def validate(self, userName, password):
-        self.validateUserName(userName)
-        self.validatePassword(password)
-        return True
+    
+    @classmethod
+    def signIn(cls,userName,password):
+        userController = cls.getUser(userName)
+        userController.checkPassword(password)
+        return userController
+    
     def validateUserName(self, userName):
         if not re.fullmatch(r'^\w{4,12}$', userName):
             raise InvalidUserNameError("❌ UserName must contain digits or letters and between 4 and 12 characters")
+        
     def validatePassword(self, password):
         if not (8 <= len(password) <= 20):
             raise InvalidPasswordError("❌ Password must be between 8 and 20 characters.")
@@ -39,12 +42,25 @@ class UserController:
             raise InvalidPasswordError("❌ Password must include at least one letter.")
         if not re.search(r'\d', password):
             raise InvalidPasswordError("❌ Password must include at least one digit.")      
-    def setName(userName,userInfo):
+        
+    def validate(self, userName, password):
+        self.validateUserName(userName)
+        self.validatePassword(password)
+
+    @classmethod
+    def signUp(cls, userName, password):
+        users = User.loadUsers()
+        if userName in users:
+            raise UsernameAlreadyExistsError('This user already exists.')
+        cls.validate(userName, password)
+        user = User(userName, None)
+        user.createUser(password)
+        return cls(user)
+    
+    def setName(self,userInfo):
         if not len(userInfo) in [1,2] or not all(list(map(lambda text: re.fullmatch(r'\w{3,15}',text),userInfo))):
             raise InvalidNameOrLastNameError("name or last name has wrong syntax")
-        user = User(userName)
-        if len(userInfo) == 1:
-            userInfo.append(None)
-        user.getUser()
-        [user.user["name"],user.user["lastName"]] = userInfo
-        user.save()
+        name = userInfo[0]
+        lastName = userInfo[1] if len(userInfo) == 2 else None
+        self.user.name = name
+        self.user.lastName = lastName
