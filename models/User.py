@@ -35,6 +35,14 @@ class User:
             with open(self.database, 'w') as database:
                 json.dump(users, database, indent=4)
 
+    def updateUser(self):
+        users = User.loadUsers()
+        users[self.userName] = self.user
+        lock = FileLock(self.lockFile)
+        with lock:
+            with open(self.database, 'w') as database:
+                json.dump(users, database, indent=4)
+
     @classmethod
     def createUser(cls, userName, password):
         users = cls.loadUsers()

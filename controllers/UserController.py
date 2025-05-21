@@ -62,3 +62,4 @@ class UserController:
         lastName = userInfo[1] if len(userInfo) == 2 else None
         self.user.name = name
         self.user.lastName = lastName
+        self.user.updateUser()
