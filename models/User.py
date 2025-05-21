@@ -39,7 +39,7 @@ class User:
     def createUser(cls, userName, password):
         users = cls.loadUsers()
         if userName in users:
-            raise UsernameAlreadyExistsError("Username already exists")
+            return False
         user = User(userName)
         data = {
             "password": password,
@@ -76,6 +76,7 @@ class User:
         }
         users[userName] = data
         user.saveDatabase(users)
+        return user
     
     @property
     def password(self):
