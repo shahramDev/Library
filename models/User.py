@@ -29,7 +29,9 @@ class User:
         user = users.get(userName)
         return User(userName,user)
     
-    def saveDatabase(self, users):
+    def saveDatabase(self, user):
+        users = User.loadUsers()
+        users[self.userName] = user
         lock = FileLock(self.lockFile)
         with lock:
             with open(self.database, 'w') as database:
@@ -74,8 +76,7 @@ class User:
             },
             "books": []
         }
-        users[userName] = data
-        user.saveDatabase(users)
+        user.saveDatabase(data)
         return user
     
     @property
@@ -96,6 +97,7 @@ class User:
 
     @name.setter
     def name(self, value):
+        print('test')
         self.user["name"] = value
 
     @property
