@@ -8,6 +8,7 @@ from core.ErrorHandling import(
     InvalidNameOrLastNameError
 )
 import re
+import bcrypt
 
 class UserController:
 
@@ -22,7 +23,7 @@ class UserController:
         return cls(user)
     
     def checkPassword(self,password):
-        if self.user.password != password:
+        if not bcrypt.checkpw(password.encode(),self.user.password.encode()):
             raise InvalidCredentialsError('password is wrong')
     
     @classmethod
@@ -31,30 +32,27 @@ class UserController:
         userController.checkPassword(password)
         return userController
     
-    def validateUserName(self, userName):
+    def validateUserName(userName):
         if not re.fullmatch(r'^\w{4,12}$', userName):
             raise InvalidUserNameError("❌ UserName must contain digits or letters and between 4 and 12 characters")
         
-    def validatePassword(self, password):
+    def validatePassword(password):
         if not (8 <= len(password) <= 20):
             raise InvalidPasswordError("❌ Password must be between 8 and 20 characters.")
         if not re.search(r'[A-Za-z]', password):
             raise InvalidPasswordError("❌ Password must include at least one letter.")
         if not re.search(r'\d', password):
             raise InvalidPasswordError("❌ Password must include at least one digit.")      
-        
-    def validate(self, userName, password):
-        self.validateUserName(userName)
-        self.validatePassword(password)
 
     @classmethod
     def signUp(cls, userName, password):
         users = User.loadUsers()
         if userName in users:
             raise UsernameAlreadyExistsError('This user already exists.')
-        cls.validate(userName, password)
+        cls.validateUserName(userName)
+        cls.validatePassword(password)
         user = User(userName, None)
-        user.createUser(password)
+        user.createUser(userName,password)
         return cls(user)
     
     def setName(self,userInfo):

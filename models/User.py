@@ -32,8 +32,8 @@ class User:
     def saveDatabase(self, users):
         lock = FileLock(self.lockFile)
         with lock:
-            with open(self.database, 'w') as f:
-                json.dump(users, f, indent=4)
+            with open(self.database, 'w') as database:
+                json.dump(users, database, indent=4)
 
     @classmethod
     def createUser(cls, userName, password):
@@ -42,7 +42,7 @@ class User:
             return None
         user = User(userName)
         data = {
-            "password": bcrypt.hashpw(password.encode(),bcrypt.gensalt()),
+            "password": bcrypt.hashpw(password.encode(),bcrypt.gensalt()).decode(),
             "userId": 1000000 + len(users),
             "name": None,
             "lastName": None,
@@ -84,7 +84,7 @@ class User:
 
     @password.setter
     def password(self, value):
-        self.user["password"] = bcrypt.hashpw(value.encode(),bcrypt.gensalt())
+        self.user["password"] = bcrypt.hashpw(value.encode(),bcrypt.gensalt()).decode()
 
     @property
     def userId(self):
