@@ -1,9 +1,35 @@
 {
     "shahram": {
-        "password": "@BYSHAHRAM1384",
+        "password": "$2b$12$PXZqPl5Qt72zQyyHLrn1yeiAV0Lqf/PRHW/wnuBcp9lMHAkAHAeJC",
+        "userId": 1000000,
+        "name": "shahram",
+        "lastName": null,
+        "email": null,
+        "phoneNumber": null,
+        "createdAt": "2025-05-21T22:12:48.429191",
+        "isActive": true,
+        "deletedAt": null,
+        "age": null,
         "userAccess": {
-            "isAdmin": false
+            "isAdmin": false,
+            "role": "user",
+            "permissions": {
+                "addingBooks": false,
+                "editingBooks": false,
+                "removingBooks": false,
+                "manageUsers": false,
+                "manageAdmins": false,
+                "viewReports": false,
+                "userMessages": false,
+                "upgradeMemberships": false
+            }
         },
-        "userId": 10
+        "addresses": {},
+        "memberShip": {
+            "level": "normal",
+            "since": null,
+            "to": null
+        },
+        "books": []
     }
 }
