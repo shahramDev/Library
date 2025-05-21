@@ -27,7 +27,7 @@ class User:
     def getUser(cls,userName):
         users = cls.loadUsers()
         user = users.get(userName)
-        return User(userName,user)
+        return cls(userName,user)
     
     def saveDatabase(self, users):
         lock = FileLock(self.lockFile)
@@ -48,7 +48,6 @@ class User:
         users = cls.loadUsers()
         if userName in users:
             return None
-        user = User(userName)
         data = {
             "password": bcrypt.hashpw(password.encode(),bcrypt.gensalt()).decode(),
             "userId": 1000000 + len(users),
@@ -82,6 +81,7 @@ class User:
             },
             "books": []
         }
+        user = User(userName,data)
         users[userName] = data
         user.saveDatabase(users)
         return user

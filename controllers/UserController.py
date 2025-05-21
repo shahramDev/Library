@@ -51,8 +51,7 @@ class UserController:
             raise UsernameAlreadyExistsError('This user already exists.')
         cls.validateUserName(userName)
         cls.validatePassword(password)
-        user = User(userName, None)
-        user.createUser(userName,password)
+        user = User.createUser(userName,password)
         return cls(user)
     
     def setName(self,userInfo):
