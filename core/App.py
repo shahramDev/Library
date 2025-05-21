@@ -1,9 +1,17 @@
 from controllers.UserController import UserController
 from controllers.AdminController import AdminController
 from controllers.BookController import BookController
-from core.ErrorHandling import UserNotFoundError ,InvalidCredentialsError,UsernameAlreadyExistsError ,InvalidPasswordError ,InvalidUserNameError ,InvalidNameOrLastNameError
+from core.ErrorHandling import( 
+    UserNotFoundError,
+    InvalidCredentialsError,
+    UsernameAlreadyExistsError,
+    InvalidPasswordError,
+    InvalidUserNameError,
+    InvalidNameOrLastNameError
+)
 
 class App:
+
     def start(self):
         userChoice = input("For continuing you need to sign in or sign up\n1- sign in\n2- sign up\n3- exit\nsend the number of your choice\n")
         if userChoice == '1': # sign in
@@ -20,6 +28,7 @@ class App:
             return
         else: # wrong answer
             return self.start()
+        
     def signIn(self,text="please enter your username and passwrod in this format\nusername password\nsend back for going back\n"):
         userInput = input(text)
         if userInput == 'back':
@@ -28,10 +37,8 @@ class App:
         if len(userInfo) != 2:
             return self.signIn("make sure youre correct and try again. write your data in this format\nusername password\n")
         userName , password = userInfo
-        userController = UserController()
         try:
-            userController.getUser(userName).checkUser(password)
-            self.userName = userName
+            self.user = UserController.signIn(userName,password)
             response = self.mainMenu()
             if response == 'back':
                 return self.signIn()
@@ -40,6 +47,7 @@ class App:
             return self.signIn("❌ No such user. Please try again or type 'back' to return.\nusername password\n")
         except InvalidCredentialsError:
             return self.signIn("❌ Invalid password. Please try again or type 'back' to return.\nusername password\n")
+        
     def signUp(self,text="please enter your username and passwrod in this format\nusername password\nsend back for going back\n"):
         userInput = input(text)
         if userInput == 'back':
@@ -48,10 +56,8 @@ class App:
         if len(userInfo) != 2:
             return self.signUp("make sure you're correct and try again. write your data in this format\nusername password\n")
         userName , password = userInfo
-        userController = UserController()
         try:
-            userController.signUp(userName,password)
-            self.userName = userName
+            self.user = UserController.signUp(userName,password)
             return self.setName()
         except UsernameAlreadyExistsError as e:
             return self.signUp("❌ Username already exists")
@@ -59,6 +65,7 @@ class App:
             return self.signUp("❌ Invalid username\nUsername must be 4 to 12 characters and contain only letters, digits, or underscores\n")
         except InvalidPasswordError as e:
             return self.signUp("❌ Invalid password Password must be 8 to 20 characters, and contain at least one digit and one letter.\n")
+        
     def setName(self,text="For continuing you've to set your name and lastname(optional) or send back to get to the first page\nwrite them in this format\nname lastname(optional) each one should be from 3 to 15 characters\n"):
         userInput = input(text)
         if userInput == 'back':
@@ -66,18 +73,17 @@ class App:
         else:
             userInfo = userInput.split()
             try:
-                UserController.setName(self.userName,userInfo)
+                self.user.setName(userInfo)
                 return self.mainMenu()
             except InvalidNameOrLastNameError as e:
                 return self.setName(e+"\n")
+            
     def mainMenu(self):
-        user = UserController().getUser(self.userName).user
-        try:
-            name = user['name']
-            lastName = user['lastName']
-        except KeyError:
+        name = self.user.user.name
+        lastName = self.user.user.lastName
+        if name is None:
             return self.setName()
-        print(f"Hi dear {name + ' ' + lastName if user.get('lastName') is not None else name}")
+        print(f"Hi dear {name + ' ' + lastName if lastName is not None else name}")
         userChoice = input("Please choose a command from the list below:\n1. Show my books\n2. Profile\n3. MemberShip\n4. settings\n5. Log out\nEnter the number of your choice:\n")
         match userChoice:
             case '1':
