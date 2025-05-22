@@ -1,5 +1,4 @@
 from controllers.UserController import UserController
-from controllers.AdminController import AdminController
 from controllers.BookController import BookController
 from core.ErrorHandling import( 
     UserNotFoundError,
@@ -79,8 +78,9 @@ class App:
                 return self.setName(e+"\n")
             
     def mainMenu(self):
-        name = self.user.user.name
-        lastName = self.user.user.lastName
+        profileData = self.user.getProfile()
+        name = profileData["name"]
+        lastName = profileData["lastName"]
         if name is None:
             return self.setName()
         print(f"Hi dear {name + ' ' + lastName if lastName is not None else name}")
@@ -96,10 +96,86 @@ class App:
                 return self.settings()
             case '5':
                 return
+        return self.mainMenu()
     def showMyBooks(self):
-        pass
+        books = self.user.getBooks()
+        if books:
+            print("\n📚 Your Borrowed Books:\n")
+            for index, book in enumerate(books, 1):
+                print(f"{index}. Book ID   : {book['bookId']}")
+                print(f"   Status    : {book['status']}")
+                print(f"   From      : {book['from']}")
+                print(f"   To        : {book['to'] if book['to'] else 'Not returned yet'}")
+                print(f"   Privacy   : {'Private' if book['privacy'] else 'Public'}")
+                print("-" * 40)
+        else:
+            print("you dont have any book history yet")
+            print("-" * 40)
+            return self.mainMenu()
     def profile(self):
-        pass
+        profileData = self.user.getProfile()
+        print("\n👤 Your Profile Information")
+        print(f"UserName     : {profileData["userName"]}")
+        print(f"Name         : {profileData["name"]}")
+        print(f"Last Name    : {profileData["lastName"]}")
+        print(f"Email        : {profileData["email"]}")
+        print(f"Phone Number : {profileData["phoneNumber"]}")
+        print(f"Age          : {profileData["age"]}")
+        print("Addresses:")
+        addresses = profileData["addresses"]
+        if addresses:
+            for label, addr in addresses.items():
+                print(f"  {label}: {addr['country']}, {addr['city']}, {addr['address']}")
+        else:
+            print("  No addresses added yet.")
+
+        print("\nDo you want to update your profile? (yes/no)")
+        choice = input(">>> ").strip().lower()
+        if choice != "yes":
+            return self.mainMenu()
+
+        while True:
+            print("\nWhat would you like to update?")
+            print("1. Name")
+            print("2. Last Name")
+            print("3. Email")
+            print("4. Phone Number")
+            print("5. Age")
+            print("6. Add Address")
+            print("7. Username")
+            print("0. Back to Main Menu")
+
+            option = input(">>> ").strip()
+            match option:
+                case "1":
+                    self.user.updateName(input("Enter new name: ").strip())
+                case "2":
+                    self.user.updateLastName(input("Enter new last name: ").strip())
+                case "3":
+                    self.user.updateEmail(input("Enter new email: ").strip())
+                case "4":
+                    self.user.updatePhoneNumber(input("Enter new phone number: ").strip())
+                case "5":
+                    self.user.updateAge(input("Enter new age: ").strip())
+                case "6":
+                    label = input("Address label (e.g., home, office): ").strip()
+                    country = input("Country: ").strip()
+                    city = input("City: ").strip()
+                    address = input("Full address: ").strip()
+                    self.user.addAddress(label, country, city, address)
+                case "7":
+                    try:
+                        self.user.updateUserName(input("Enter new userName: ").strip())
+                    except UsernameAlreadyExistsError as e:
+                        print(e)
+                case "0":
+                    return self.mainMenu()
+                case _:
+                    print("❌ Invalid option. Please try again.")
+                    continue
+
+            print("✅ Profile updated successfully.")
+
     def membership(self):
         pass
     def settings(self):
