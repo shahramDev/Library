@@ -114,6 +114,14 @@ class UserController:
         except ValueError:
             print("Invalid age.")
 
+    def updateUserName(self, userName):
+        self.validateUserName()
+        users = User.loadUsers()
+        if any(user["userName"] == userName for user in users.values()):
+            raise UsernameAlreadyExistsError('This userName is already taken')
+        self.user.userName = userName
+        self.user.updateUser()
+
     def addAddress(self, label, country, city, address):
         self.user.addAddress(label, country, city, address)
         self.user.updateUser()
