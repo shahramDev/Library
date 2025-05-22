@@ -9,78 +9,87 @@ class User:
     database = 'database/users.json'
     lockFile = database + '.lock'
 
-    def __init__(self, userName, user = None):
+    def __init__(self, userId, user = None):
         self.user = user
-        self.userName = userName
+        self.userId = userId
 
     @classmethod
     def loadUsers(cls):
         if not os.path.exists(cls.database):
             with open(cls.database, 'w') as database:
                 json.dump({}, database, indent=4)
-        lock = FileLock(cls.lockFile)
-        with lock:
-            with open(cls.database,'r') as database:
-                return json.load(database)
+        with open(cls.database,'r') as database:
+            return json.load(database)
     
     @classmethod
-    def getUser(cls,userName):
+    def getUserById(cls, userId):
         users = cls.loadUsers()
-        user = users.get(userName)
-        return cls(userName,user)
+        user = users.get(userId)
+        return cls(userId, user) if user else None
+
+    @classmethod
+    def getUserByUsername(cls, username):
+        users = cls.loadUsers()
+        for uid, data in users.items():
+            if data.get("userName") == username:
+                return cls(uid, data)
+        return None
     
     def saveDatabase(self, users):
-        lock = FileLock(self.lockFile)
-        with lock:
-            with open(self.database, 'w') as database:
-                json.dump(users, database, indent=4)
+        with open(self.database, 'w') as database:
+            json.dump(users, database, indent=4)
 
     def updateUser(self):
-        users = User.loadUsers()
-        users[self.userName] = self.user
-        self.saveDatabase(users)        
+        lock = FileLock(self.lockFile)
+        with lock:
+            users = User.loadUsers()
+            users[self.userId] = self.user
+            self.saveDatabase(users)        
 
     @classmethod
     def createUser(cls, userName, password):
-        users = cls.loadUsers()
-        if userName in users:
-            return None
-        data = {
-            "password": bcrypt.hashpw(password.encode(),bcrypt.gensalt()).decode(),
-            "userId": 1000000 + len(users),
-            "name": None,
-            "lastName": None,
-            "email": None,
-            "phoneNumber": None,
-            "createdAt": datetime.now().isoformat(),
-            "isActive": True,
-            "deletedAt": None,
-            "age": None,
-            "userAccess": {
-                "isAdmin": False,
-                "role": "user",
-                "permissions": {
-                    "addingBooks": False,
-                    "editingBooks": False,
-                    "removingBooks": False,
-                    "manageUsers": False,
-                    "manageAdmins": False,
-                    "viewReports": False,
-                    "userMessages": False,
-                    "upgradeMemberships": False
-                }
-            },
-            "addresses": {},
-            "memberShip": {
-                "level": "normal",
-                "since": None,
-                "to": None
-            },
-            "books": []
-        }
-        user = User(userName,data)
-        users[userName] = data
-        user.saveDatabase(users)
+        lock = FileLock(cls.lockFile)
+        with lock:
+            users = cls.loadUsers()
+            if any(user["userName"] == userName for user in users.values()):
+                return None
+            data = {
+                "password": bcrypt.hashpw(password.encode(),bcrypt.gensalt()).decode(),
+                "userName": userName,
+                "name": None,
+                "lastName": None,
+                "email": None,
+                "phoneNumber": None,
+                "createdAt": datetime.now().isoformat(),
+                "isActive": True,
+                "deletedAt": None,
+                "age": None,
+                "userAccess": {
+                    "isAdmin": False,
+                    "role": "user",
+                    "permissions": {
+                        "addingBooks": False,
+                        "editingBooks": False,
+                        "removingBooks": False,
+                        "manageUsers": False,
+                        "manageAdmins": False,
+                        "viewReports": False,
+                        "userMessages": False,
+                        "upgradeMemberships": False
+                    }
+                },
+                "addresses": {},
+                "memberShip": {
+                    "level": "normal",
+                    "since": None,
+                    "to": None
+                },
+                "books": []
+            }
+            userId = 1000000 + len(users)
+            user = User(userId,data)
+            users[userId] = data
+            user.saveDatabase(users)
         return user
     
     @property
@@ -92,8 +101,12 @@ class User:
         self.user["password"] = bcrypt.hashpw(value.encode(),bcrypt.gensalt()).decode()
 
     @property
-    def userId(self):
-        return self.user["userId"]
+    def userName(self):
+        return self.user["userName"]
+    
+    @userName.setter
+    def userName(self,value):
+        self.user["userName"] = value
 
     @property
     def name(self):

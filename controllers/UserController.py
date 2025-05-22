@@ -17,8 +17,8 @@ class UserController:
 
     @classmethod
     def getUser(cls,userName):
-        user = User.getUser(userName)
-        if user.user is None:
+        user = User.getUserByUsername(userName)
+        if user is None:
             raise UserNotFoundError('User does not exist.')
         return cls(user)
     
@@ -46,12 +46,11 @@ class UserController:
 
     @classmethod
     def signUp(cls, userName, password):
-        users = User.loadUsers()
-        if userName in users:
-            raise UsernameAlreadyExistsError('This user already exists.')
         cls.validateUserName(userName)
         cls.validatePassword(password)
         user = User.createUser(userName,password)
+        if user is None:
+            raise UsernameAlreadyExistsError('This user already exists.')
         return cls(user)
     
     def setName(self,userInfo):
@@ -61,4 +60,60 @@ class UserController:
         lastName = userInfo[1] if len(userInfo) == 2 else None
         self.user.name = name
         self.user.lastName = lastName
+        self.user.updateUser()
+
+    def getBooks(self):
+        books = self.user.getBooks()
+        return [
+            {
+                "bookId": book["bookId"],
+                "status": book["status"],
+                "from": book["from"],
+                "to": book["to"],
+                "privacy": book["privacy"]
+            }
+            for book in books
+        ]
+    
+    def getProfile(self):
+        return {
+            "userName": self.user.userName,
+            "name": self.user.name,
+            "lastName": self.user.lastName,
+            "email": self.user.email,
+            "phoneNumber": self.user.phoneNumber,
+            "age": self.user.age,
+            "addresses": self.user.getAddresses()
+        }
+
+    def updateName(self, name):
+        self.user.name = name
+        self.user.updateUser()
+
+    def updateLastName(self, lastName):
+        self.user.lastName = lastName
+        self.user.updateUser()
+
+    def isValidEmail(self, email):
+        pattern = r'^[\w\.-]+@[\w\.-]+\.\w{2,}$'
+        if not re.match(pattern, email):
+            raise Exception
+
+    def updateEmail(self, email):
+        self.user.email = email
+        self.user.updateUser()
+
+    def updatePhoneNumber(self, phone):
+        self.user.phoneNumber = phone
+        self.user.updateUser()
+
+    def updateAge(self, age):
+        try:
+            self.user.age = int(age)
+            self.user.updateUser()
+        except ValueError:
+            print("Invalid age.")
+
+    def addAddress(self, label, country, city, address):
+        self.user.addAddress(label, country, city, address)
         self.user.updateUser()
