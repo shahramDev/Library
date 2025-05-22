@@ -18,7 +18,7 @@ class UserController:
     @classmethod
     def getUser(cls,userName):
         user = User.getUser(userName)
-        if user is None:
+        if user.user is None:
             raise UserNotFoundError('User does not exist.')
         return cls(user)
     
