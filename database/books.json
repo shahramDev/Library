@@ -1,3 +1,18 @@
 {
-    
+    "1515": {
+        "title": "hi",
+        "author": "me",
+        "publisher": "you",
+        "publishYear": "2000",
+        "abstract": "hello",
+        "pages": "1",
+        "language": "en",
+        "contentType": "comody",
+        "usageType": "refrence",
+        "genres": [
+            "fiction"
+        ],
+        "availableCopies": "5",
+        "totalCopies": "15"
+    }
 }

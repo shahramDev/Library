@@ -9,6 +9,7 @@ from core.ErrorHandling import(
 )
 import re
 import bcrypt
+from datetime import datetime, timedelta
 
 class UserController:
 
@@ -100,9 +101,8 @@ class UserController:
             "editingBooks": self.user.getPermission("editingBooks"),
             "removingBooks": self.user.getPermission("removingBooks"),
             "manageUsers": self.user.getPermission("manageUsers"),
-            "manageAdmins": self.user.getPermission("manaageAdmins"),
-            "viewReports": self.user.getPermission("viewReports")
-            }
+            "manageAdmins": self.user.getPermission("manaageAdmins")
+        }
 
     def updateName(self, name):
         self.user.name = name
@@ -155,10 +155,27 @@ class UserController:
     def setAdmin(self,isAdmin):
         self.isAdmin = isAdmin
         if not isAdmin:
-            for permission in ["addingBooks","editingBooks","removingBooks","manageUsers","manageAdmins","viewReports"]:
+            for permission in ["addingBooks","editingBooks","removingBooks","manageUsers","manageAdmins"]:
                 self.user.setPermission(permission,False)
         self.user.updateUser()
 
     def setPermission(self,permission,value):
         self.user.setPermission(permission,value) 
+        self.user.updateUser()
+
+
+    def addBook(self, bookId, days=14, privacy=True):
+
+        today = datetime.today().strftime('%Y-%m-%d')
+        due_date = (datetime.today() + timedelta(days=days)).strftime('%Y-%m-%d')
+
+        newBookEntry = {
+            "bookId": bookId,
+            "status": "borrowed",
+            "from": today,
+            "to": due_date,
+            "privacy": privacy
+        }
+
+        self.user.addBook(*newBookEntry.values())
         self.user.updateUser()

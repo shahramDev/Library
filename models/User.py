@@ -72,8 +72,7 @@ class User:
                         "editingBooks": False,
                         "removingBooks": False,
                         "manageUsers": False,
-                        "manageAdmins": False,
-                        "viewReports": False
+                        "manageAdmins": False
                     }
                 },
                 "addresses": {},
@@ -208,6 +207,6 @@ class User:
             "to": toDate,
             "privacy": privacy
         })
-
+        self.updateUser()
     def getBooks(self):
         return self.user["books"]

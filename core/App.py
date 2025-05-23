@@ -86,7 +86,7 @@ class App:
         if name is None:
             return self.setName()
         print(f"Hi dear {name + ' ' + lastName if lastName is not None else name}")
-        text = "Please choose a command from the list below:\n1. Show my books\n2. Profile\n" + ("3. Admin Panel\n" if profileData["isAdmin"] else '') + "0. Log out\nEnter the number of your choice:\n>>> "
+        text = "Please choose a command from the list below:\n1. Show my books\n2. Profile\n3. Borrow Book\n" + ("4. Admin Panel\n" if profileData["isAdmin"] else '') + "0. Log out\nEnter the number of your choice:\n>>> "
         while True:
             userChoice = input(text).strip()
             match userChoice:
@@ -95,6 +95,8 @@ class App:
                 case '2':
                     return self.profile()
                 case '3':
+                    return self.borrowBook()
+                case '4':
                     if profileData["isAdmin"]:
                         return self.adminPanel()
                     else:
@@ -190,7 +192,6 @@ class App:
             print("\n🛠️ Admin Panel")
             print("1. manage users")
             print("2. Manage Books")
-            print("3. View Reports")
             print("0. Back to Main Menu")
 
             choice = input(">>> ").strip()
@@ -205,12 +206,6 @@ class App:
                 case "2":
                     if profileData["addingBooks"] or profileData["removingBooks"] or profileData["editingBooks"]:
                         return self.manageBooks()
-                    else:
-                        print("Access denied")
-                        return self.adminPanel()
-                case "3":
-                    if profileData["viewReports"]:
-                        return self.viewReports()
                     else:
                         print("Access denied")
                         return self.adminPanel()
@@ -407,5 +402,26 @@ class App:
         except Exception as e:
             print(f"❌ Error: {e}")
 
-    def viewReports(self):
-        pass
+    def borrowBook(self):
+        bookId = input("Enter the Book ID you want to borrow: ").strip()
+
+        try:
+            bookController = BookController.getBook(bookId)
+            book = bookController.getDetails()
+            availableCopies = book["availableCopies"]
+
+            if availableCopies == 0:
+                print("❌ No available copies to borrow.")
+                return self.mainMenu()
+            else:
+                bookController.updateAvailableCopies(str(int(availableCopies)-1))
+
+
+            self.user.addBook(bookId)
+
+            print(f"✅ Book '{book["title"]}' borrowed successfully.")
+
+        except BookNotFoundError:
+            print("❌ Book not found.")
+
+        return self.mainMenu()
