@@ -6,7 +6,9 @@ from core.ErrorHandling import(
     UsernameAlreadyExistsError,
     InvalidPasswordError,
     InvalidUserNameError,
-    InvalidNameOrLastNameError
+    InvalidNameOrLastNameError,
+    BookAlreadyExistsError,
+    BookNotFoundError
 )
 
 class App:
@@ -303,7 +305,107 @@ class App:
 
 
     def manageBooks(self):
-        pass
+        while True:
+            print("\n📚 Book Management Menu:")
+            print("1. Add a new book")
+            print("2. View book details")
+            print("3. Update a book")
+            print("4. Delete a book")
+            print("0. Back to main menu")
+
+            choice = input("Enter your choice: ").strip()
+
+            match choice:
+                case "1":
+                    return self.addBook()
+                case "2":
+                    return self.bookDetails()
+                case "3":
+                    return self.updateBook()
+                case "4":
+                    return self.deleteBook()
+                case "0":
+                    return
+                case _:
+                    print("❌ Invalid choice.")
+
+    
+    def addBook(self):
+        bookId = input("Enter Book ID: ")
+        title = input("Title: ")
+        author = input("Author: ")
+        publisher = input("Publisher: ")
+        publishYear = input("Publish Year: ")
+        abstract = input("Abstract: ")
+        pages = input("Pages: ")
+        language = input("Language: ")
+        contentType = input("Content Type: ")
+        usageType = input("Usage Type: ")
+        genres = input("Genres (comma-separated): ").split(',')
+        availableCopies = input("Available Copies: ")
+        totalCopies = input("Total Copies: ")
+
+        bookInfo = [
+            title, author, publisher, publishYear, abstract,
+            pages, language, contentType, usageType, genres,
+            availableCopies, totalCopies
+        ]
+        try:
+            BookController.addBook(bookId, bookInfo)
+            print("✅ Book added successfully.")
+        except BookAlreadyExistsError as e:
+            print(f"❌ Error: {e}")
+
+    def bookDetails(self):
+        bookId = input("Enter Book ID to view: ")
+        try:
+            bookController = BookController.getBook(bookId)
+            details = bookController.getDetails()
+            for key, value in details.items():
+                print(f"{key}: {value}")
+        except Exception as e:
+            print(f"❌ Error: {e}")
+
+    def updateBook(self):
+        bookId = input("Enter Book ID to update: ")
+        try:
+            bookController = BookController.getBook(bookId)
+            print("Which field do you want to update?")
+            print("1. Title\n2. Author\n3. Publisher\n4. Publish Year\n5. Abstract\n6. Pages")
+            print("7. Language\n8. Content Type\n9. Usage Type\n10. Genres")
+            print("11. Available Copies\n12. Total Copies\n13. Premium")
+            field = input("Enter field number: ").strip()
+            value = input("Enter new value: ")
+
+            update_methods = {
+                '1': bookController.updateTitle,
+                '2': bookController.updateAuthor,
+                '3': bookController.updatePublisher,
+                '4': bookController.updatePublishYear,
+                '5': bookController.updateAbstract,
+                '6': lambda v: bookController.updatePages(int(v)),
+                '7': bookController.updateLanguage,
+                '8': bookController.updateContentType,
+                '9': bookController.updateUsageType,
+                '10': lambda v: bookController.updateGenres(v.split(',')),
+                '11': lambda v: bookController.updateAvailableCopies(int(v)),
+                '12': lambda v: bookController.updateTotalCopies(int(v))
+            }
+            if field in update_methods:
+                update_methods[field](value)
+                print("✅ Book updated successfully.")
+            else:
+                print("❌ Invalid field number.")
+        except BookNotFoundError as e:
+            print(f"❌ Error: {e}")
+
+    def deleteBook(self):
+        bookId = input("Enter Book ID to delete: ")
+        try:
+            BookController.deleteBook(bookId)
+            print("✅ Book deleted.")
+        except Exception as e:
+            print(f"❌ Error: {e}")
 
     def viewReports(self):
         pass
