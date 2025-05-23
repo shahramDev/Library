@@ -41,22 +41,22 @@ class Book:
             return None
         data = {
             "title":bookInfo[0],
-            "premium":bookInfo[1],
-            "author":bookInfo[2],
-            "publisher":bookInfo[3],
-            "publishYear":bookInfo[4],
-            "abstract":bookInfo[5],
-            "pages":bookInfo[6],
-            "language":bookInfo[7],
-            "contentType": bookInfo[8],
-            "usageType": bookInfo[9],
-            "genres":bookInfo[10],
-            "availableCopies":bookInfo[11],
-            "totalCopies":bookInfo[12]
+            "author":bookInfo[1],
+            "publisher":bookInfo[2],
+            "publishYear":bookInfo[3],
+            "abstract":bookInfo[4],
+            "pages":bookInfo[5],
+            "language":bookInfo[6],
+            "contentType": bookInfo[7],
+            "usageType": bookInfo[8],
+            "genres":bookInfo[9],
+            "availableCopies":bookInfo[10],
+            "totalCopies":bookInfo[11]
         }
         books[bookId] = data
-        cls.saveBooks(books)
-        return cls(bookId, bookInfo)
+        book = cls(bookId,data)
+        book.saveBooks(books)
+        return book
 
     def updateBook(self):
         books = Book.loadBooks()
@@ -80,13 +80,6 @@ class Book:
     def title(self, value):
         self.book["title"] = value
 
-    @property
-    def premium(self):
-        return self.book["premium"]
-
-    @premium.setter
-    def premium(self, value):
-        self.book["premium"] = value
 
     @property
     def author(self):
