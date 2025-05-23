@@ -83,7 +83,17 @@ class UserController:
             "email": self.user.email,
             "phoneNumber": self.user.phoneNumber,
             "age": self.user.age,
-            "addresses": self.user.getAddresses()
+            "addresses": self.user.getAddresses(),
+            "createdAt": self.user.createdAt,
+            "isAdmin": self.user.isAdmin,
+            "role": self.user.role,
+            "addingBooks": self.user.getPermision("addingBooks"),
+            "editingBooks": self.user.getPermision("editingBooks"),
+            "removingBooks": self.user.getPermision("removingBooks"),
+            "manageUsers": self.user.getPermision("manageUsers"),
+            "manageAdmins": self.user.getPermision("manaageAdmins"),
+            "viewReports": self.user.getPermision("viewReports"),
+            "userMessages": self.user.getPermision("userMessages"),
         }
 
     def updateName(self, name):
