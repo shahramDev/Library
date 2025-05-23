@@ -84,19 +84,24 @@ class App:
         if name is None:
             return self.setName()
         print(f"Hi dear {name + ' ' + lastName if lastName is not None else name}")
-        userChoice = input("Please choose a command from the list below:\n1. Show my books\n2. Profile\n3. MemberShip\n4. settings\n5. Log out\nEnter the number of your choice:\n")
-        match userChoice:
-            case '1':
-                return self.showMyBooks()
-            case '2':
-                return self.profile()
-            case '3':
-                return self.membership()
-            case '4':
-                return self.settings()
-            case '5':
-                return
-        return self.mainMenu()
+        text = "Please choose a command from the list below:\n1. Show my books\n2. Profile\n" + ("3. Admin Panel\n" if profileData["isAdmin"] else '') + "0. Log out\nEnter the number of your choice:\n>>> "
+        while True:
+            userChoice = input(text).strip()
+            match userChoice:
+                case '1':
+                    return self.showMyBooks()
+                case '2':
+                    return self.profile()
+                case '3':
+                    if profileData["isAdmin"]:
+                        return self.adminPanel()
+                    else:
+                        print("Invalid Input. try again")
+                case '0':
+                    return
+                case _:
+                    print("Invalid Input. try again")
+    
     def showMyBooks(self):
         books = self.user.getBooks()
         if books:
@@ -112,6 +117,7 @@ class App:
             print("you dont have any book history yet")
             print("-" * 40)
             return self.mainMenu()
+        
     def profile(self):
         profileData = self.user.getProfile()
         print("\n👤 Your Profile Information")
@@ -175,8 +181,47 @@ class App:
                     continue
 
             print("✅ Profile updated successfully.")
+    
+    def adminPanel(self):
+        profileData = self.user.getProfile()
+        while True:
+            print("\n🛠️ Admin Panel")
+            print("1. manage users")
+            print("2. Manage Books")
+            print("3. View Reports")
+            print("0. Back to Main Menu")
 
-    def membership(self):
+            choice = input(">>> ").strip()
+
+            match choice:
+                case "1":
+                    if profileData["manageUsers"]:
+                        return self.manageUsers()
+                    else:
+                        print("Access denied")
+                        return self.adminPanel()
+                case "2":
+                    if profileData["addingBooks"] or profileData["removingBooks"] or profileData["editingBooks"]:
+                        return self.manageBooks()
+                    else:
+                        print("Access denied")
+                        return self.adminPanel()
+                case "3":
+                    if profileData["viewReports"]:
+                        return self.viewReports()
+                    else:
+                        print("Access denied")
+                        return self.adminPanel()
+                case "0":
+                    return self.mainMenu()
+                case _:
+                    print("❗ Invalid choice. Please try again.")
+
+    def manageUsers(self):
         pass
-    def settings(self):
+
+    def manageBooks(self):
+        pass
+
+    def viewReports(self):
         pass
