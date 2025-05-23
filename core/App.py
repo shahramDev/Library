@@ -218,7 +218,89 @@ class App:
                     print("❗ Invalid choice. Please try again.")
 
     def manageUsers(self):
-        pass
+        print("\n🔧 Manage Users")
+        userId = input("Enter the User ID: ").strip()
+        if not userId.isdigit():
+            print("❌ Invalid User ID format. It should be a number.")
+            return
+
+        user = self.user.getUserById(userId)
+        if not user:
+            print("❌ User not found.")
+            return
+
+        profileData = user.getProfile()
+        print("\n👤 User Information")
+        print(f"UserID      : {userId}")
+        print(f"Username    : {profileData["userName"]}")
+        print(f"Name        : {profileData["name"]} {profileData['lastName'] if profileData['lastName'] is not None else '' }")
+        print(f"Email       : {profileData["email"]}")
+        print(f"Phone       : {profileData["phoneNumber"]}")
+        print(f"Age         : {profileData["age"]}")
+        print(f"Active      : {profileData["isActive"]}")
+        print(f"Admin       : {profileData["isAdmin"]}")
+        print(f"Created At  : {profileData["createdAt"]}")
+        print(f"Addresses   :")
+        addresses = user.getAddresses()
+        if addresses:
+            for label, addr in addresses.items():
+                print(f"  {label}: {addr['country']}, {addr['city']}, {addr['address']}")
+        else:
+            print("  No addresses.")
+        while True:
+            print("\nWhat do you want to do with this user?")
+            print("1. Deactivate user")
+            print("2. Activate user")
+            print("3. Promote to admin")
+            print("4. Demote from admin")
+            print("0. Back")
+
+            choice = input(">>> ").strip()
+            match choice:
+                case "1":
+                    user.setActive(False)
+                    print("🚫 User deactivated.")
+                case "2":
+                    user.setActive(True)
+                    print("✅ User activated.")
+                case "3":
+                    user.setAdmin(True)
+                    print("🛡️ User promoted to admin.")
+                    return self.setPermissions(user)
+                case "4":
+                    user.setAdmin(False)
+                    print("⚠️ User demoted from admin.")
+                case "0":
+                    return
+                case _:
+                    print("❌ Invalid choice.")
+
+    def setPermissions(self,user):
+        print("\n🔒 Set Admin Permissions")
+
+        permission_labels = {
+            "addingBooks": "📚 Add Books",
+            "editingBooks": "✏️ Edit Books",
+            "removingBooks": "🗑️ Remove Books",
+            "manageUsers": "👥 Manage Users",
+            "manageAdmins": "🛡️ Manage Admins",
+            "viewReports": "📊 View Reports"
+        }
+
+        print("Toggle permissions (y = yes, n = no):")
+
+        for key, label in permission_labels.items():
+            curentPermission = user.getProfile()[key]
+            default = "y" if curentPermission else "n"
+            userInput = input(f"{label} [{default}]: ").strip().lower()
+            if userInput not in ['y','n']: userInput == default
+            if userInput == 'y': 
+                user.setPermission(key,True)
+            else:
+                user.setPermission(key,False)
+                
+        print("✅ Permissions updated successfully.")
+
 
     def manageBooks(self):
         pass

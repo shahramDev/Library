@@ -22,6 +22,14 @@ class UserController:
             raise UserNotFoundError('User does not exist.')
         return cls(user)
     
+    @classmethod
+    def getUserById(cls,userId):
+        user = User.getUserById(userId)
+        if user is None:
+            raise UserNotFoundError('User does not exist.')
+        return cls(user)
+
+
     def checkPassword(self,password):
         if not bcrypt.checkpw(password.encode(),self.user.password.encode()):
             raise InvalidCredentialsError('password is wrong')
@@ -86,15 +94,15 @@ class UserController:
             "addresses": self.user.getAddresses(),
             "createdAt": self.user.createdAt,
             "isAdmin": self.user.isAdmin,
+            "isActive": self.user.isActive,
             "role": self.user.role,
-            "addingBooks": self.user.getPermision("addingBooks"),
-            "editingBooks": self.user.getPermision("editingBooks"),
-            "removingBooks": self.user.getPermision("removingBooks"),
-            "manageUsers": self.user.getPermision("manageUsers"),
-            "manageAdmins": self.user.getPermision("manaageAdmins"),
-            "viewReports": self.user.getPermision("viewReports"),
-            "userMessages": self.user.getPermision("userMessages"),
-        }
+            "addingBooks": self.user.getPermission("addingBooks"),
+            "editingBooks": self.user.getPermission("editingBooks"),
+            "removingBooks": self.user.getPermission("removingBooks"),
+            "manageUsers": self.user.getPermission("manageUsers"),
+            "manageAdmins": self.user.getPermission("manaageAdmins"),
+            "viewReports": self.user.getPermission("viewReports")
+            }
 
     def updateName(self, name):
         self.user.name = name
@@ -119,7 +127,7 @@ class UserController:
 
     def updateAge(self, age):
         try:
-            self.user.age = int(age)
+            self.user.age = age
             self.user.updateUser()
         except ValueError:
             print("Invalid age.")
@@ -134,4 +142,23 @@ class UserController:
 
     def addAddress(self, label, country, city, address):
         self.user.addAddress(label, country, city, address)
+        self.user.updateUser()
+
+    def getAddresses(self):
+        addresses = self.user.getAddresses()
+        return addresses
+
+    def setActive(self,isActive):
+        self.user.isActive = isActive
+        self.user.updateUser()
+
+    def setAdmin(self,isAdmin):
+        self.isAdmin = isAdmin
+        if not isAdmin:
+            for permission in ["addingBooks","editingBooks","removingBooks","manageUsers","manageAdmins","viewReports"]:
+                self.user.setPermission(permission,False)
+        self.user.updateUser()
+
+    def setPermission(self,permission,value):
+        self.user.setPermission(permission,value) 
         self.user.updateUser()
