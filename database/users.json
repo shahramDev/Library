@@ -1,34 +1,33 @@
 {
-    "shahram": {
-        "password": "$2b$12$PXZqPl5Qt72zQyyHLrn1yeiAV0Lqf/PRHW/wnuBcp9lMHAkAHAeJC",
-        "userId": 1000000,
+    "1000000": {
+        "password": "$2b$12$cdqn485MLWTamvvfYPCg3OUsVGB7fmS1rBuwq3Yo6Fv6SZ68qT0B6",
+        "userName": "shahram",
         "name": "shahram",
-        "lastName": null,
+        "lastName": "gharagozlo",
         "email": null,
         "phoneNumber": null,
-        "createdAt": "2025-05-21T22:12:48.429191",
+        "createdAt": "2025-05-22T23:04:39.461159",
         "isActive": true,
         "deletedAt": null,
         "age": null,
         "userAccess": {
-            "isAdmin": false,
+            "isAdmin": true,
             "role": "user",
             "permissions": {
                 "addingBooks": false,
-                "editingBooks": false,
-                "removingBooks": false,
-                "manageUsers": false,
-                "manageAdmins": false,
-                "viewReports": false,
-                "userMessages": false,
-                "upgradeMemberships": false
+                "editingBooks": true,
+                "removingBooks": true,
+                "manageUsers": true,
+                "manageAdmins": true,
+                "viewReports": true
             }
         },
-        "addresses": {},
-        "memberShip": {
-            "level": "normal",
-            "since": null,
-            "to": null
+        "addresses": {
+            "Home": {
+                "country": "Iran",
+                "city": "Tehran",
+                "address": "skkds"
+            }
         },
         "books": []
     }
