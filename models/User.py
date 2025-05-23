@@ -73,8 +73,7 @@ class User:
                         "removingBooks": False,
                         "manageUsers": False,
                         "manageAdmins": False,
-                        "viewReports": False,
-                        "userMessages": False
+                        "viewReports": False
                     }
                 },
                 "addresses": {},
