@@ -74,16 +74,10 @@ class User:
                         "manageUsers": False,
                         "manageAdmins": False,
                         "viewReports": False,
-                        "userMessages": False,
-                        "upgradeMemberships": False
+                        "userMessages": False
                     }
                 },
                 "addresses": {},
-                "memberShip": {
-                    "level": "normal",
-                    "since": None,
-                    "to": None
-                },
                 "books": []
             }
             userId = 1000000 + len(users)
@@ -205,31 +199,6 @@ class User:
     
     def getAddress(self,name):
         return self.getAddresses()[name]
-
-    # Membership
-    @property
-    def membershipLevel(self):
-        return self.user["memberShip"]["level"]
-
-    @membershipLevel.setter
-    def membershipLevel(self, value):
-        self.user["memberShip"]["level"] = value
-
-    @property
-    def membershipSince(self):
-        return self.user["memberShip"]["since"]
-
-    @membershipSince.setter
-    def membershipSince(self, value):
-        self.user["memberShip"]["since"] = value
-
-    @property
-    def membershipTo(self):
-        return self.user["memberShip"]["to"]
-
-    @membershipTo.setter
-    def membershipTo(self, value):
-        self.user["memberShip"]["to"] = value
 
     # Books
     def addBook(self, bookId, status, fromDate, toDate=None, privacy=False):
