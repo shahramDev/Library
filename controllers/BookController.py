@@ -72,15 +72,11 @@ class BookController:
         self.book.totalCopies = count
         self.book.updateBook()
 
-    def updatePremium(self, value):
-        self.book.premium = value
-        self.book.updateBook()
 
     def getDetails(self):
         return {
             "bookId": self.book.bookId,
             "title": self.book.title,
-            "premium": self.book.premium,
             "author": self.book.author,
             "publisher": self.book.publisher,
             "publishYear": self.book.publishYear,
