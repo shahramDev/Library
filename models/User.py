@@ -15,11 +15,11 @@ class User:
 
     @classmethod
     def loadUsers(cls):
-        if not os.path.exists(cls.database):
-            with open(cls.database, 'w') as database:
-                json.dump({}, database, indent=4)
-        with open(cls.database,'r') as database:
-            return json.load(database)
+        try:
+            with open(cls.database,'r') as database:
+                return json.load(database)
+        except:
+            return {}
     
     @classmethod
     def getUserById(cls, userId):
@@ -43,7 +43,7 @@ class User:
         lock = FileLock(self.lockFile)
         with lock:
             users = User.loadUsers()
-            users[self.userId] = self.user
+            users.update({self.userId:self.user})
             self.saveDatabase(users)        
 
     @classmethod
@@ -78,7 +78,7 @@ class User:
                 "addresses": {},
                 "books": []
             }
-            userId = 1000000 + len(users)
+            userId = str(1000000 + len(users))
             user = User(userId,data)
             users[userId] = data
             user.saveDatabase(users)

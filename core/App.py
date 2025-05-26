@@ -213,6 +213,7 @@ class App:
                     return self.mainMenu()
                 case _:
                     print("❗ Invalid choice. Please try again.")
+                    return self.adminPanel()
 
     def manageUsers(self):
         print("\n🔧 Manage Users")
@@ -252,6 +253,8 @@ class App:
             print("4. Demote from admin")
             print("0. Back")
 
+            admin = self.user.getProfile()
+
             choice = input(">>> ").strip()
             match choice:
                 case "1":
@@ -261,12 +264,18 @@ class App:
                     user.setActive(True)
                     print("✅ User activated.")
                 case "3":
-                    user.setAdmin(True)
-                    print("🛡️ User promoted to admin.")
-                    return self.setPermissions(user)
+                    if admin["manageAdmins"]:
+                        user.setAdmin(True)
+                        print("🛡️ User promoted to admin.")
+                        return self.setPermissions(user)
+                    else:
+                        print("Access Denied")
                 case "4":
-                    user.setAdmin(False)
-                    print("⚠️ User demoted from admin.")
+                    if admin["manageAdmins"]:
+                        user.setAdmin(False)
+                        print("⚠️ User demoted from admin.")
+                    else:
+                        print("Access Denied")
                 case "0":
                     return
                 case _:
@@ -348,8 +357,10 @@ class App:
         try:
             BookController.addBook(bookId, bookInfo)
             print("✅ Book added successfully.")
+            return self.mainMenu()
         except BookAlreadyExistsError as e:
             print(f"❌ Error: {e}")
+            return self.addBook()
 
     def bookDetails(self):
         bookId = input("Enter Book ID to view: ")
@@ -358,6 +369,7 @@ class App:
             details = bookController.getDetails()
             for key, value in details.items():
                 print(f"{key}: {value}")
+                return self.mainMenu()
         except Exception as e:
             print(f"❌ Error: {e}")
 
@@ -391,30 +403,36 @@ class App:
                 print("✅ Book updated successfully.")
             else:
                 print("❌ Invalid field number.")
+            
+            return self.updateBook()
         except BookNotFoundError as e:
             print(f"❌ Error: {e}")
+            return self.updateBook()
 
     def deleteBook(self):
         bookId = input("Enter Book ID to delete: ")
         try:
             BookController.deleteBook(bookId)
             print("✅ Book deleted.")
+            return self.mainMenu()
         except Exception as e:
             print(f"❌ Error: {e}")
 
     def borrowBook(self):
-        bookId = input("Enter the Book ID you want to borrow: ").strip()
-
+        userInput = input("Enter the Book ID you want to borrow: \nOr back for going to main menu\n").strip()
+        if userInput == 'back':
+            return 'back'
         try:
+            bookId = userInput
             bookController = BookController.getBook(bookId)
             book = bookController.getDetails()
             availableCopies = book["availableCopies"]
 
             if availableCopies == 0:
                 print("❌ No available copies to borrow.")
-                return self.mainMenu()
+                return self.borrowBook()
             else:
-                bookController.updateAvailableCopies(str(int(availableCopies)-1))
+                bookController.updateAvailableCopies(int(availableCopies)-1)
 
 
             self.user.addBook(bookId)
@@ -423,5 +441,6 @@ class App:
 
         except BookNotFoundError:
             print("❌ Book not found.")
+            return self.borrowBook()
 
         return self.mainMenu()

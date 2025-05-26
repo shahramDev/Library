@@ -101,21 +101,26 @@ class UserController:
             "editingBooks": self.user.getPermission("editingBooks"),
             "removingBooks": self.user.getPermission("removingBooks"),
             "manageUsers": self.user.getPermission("manageUsers"),
-            "manageAdmins": self.user.getPermission("manaageAdmins")
+            "manageAdmins": self.user.getPermission("manageAdmins")
         }
 
     def updateName(self, name):
         self.user.name = name
         self.user.updateUser()
 
-    def updateLastName(self, lastName):
-        self.user.lastName = lastName
+    def updateUserName(self, userName):
+        UserController.validateUserName(userName)
+        users = User.loadUsers()
+        if any(user["userName"] == userName for user in users.values()):
+            raise UsernameAlreadyExistsError('This userName is already taken')
+        self.user.userName = userName
         self.user.updateUser()
 
     def isValidEmail(self, email):
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w{2,}$'
         if not re.match(pattern, email):
-            raise Exception
+            raise ValueError("Invalid email format.")
+
 
     def updateEmail(self, email):
         self.user.email = email

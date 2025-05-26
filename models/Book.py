@@ -53,7 +53,7 @@ class Book:
             "availableCopies":bookInfo[10],
             "totalCopies":bookInfo[11]
         }
-        books[bookId] = data
+        books[str(bookId)] = data
         book = cls(bookId,data)
         book.saveBooks(books)
         return book

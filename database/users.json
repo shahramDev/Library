@@ -1,82 +1,24 @@
 {
     "1000000": {
-        "password": "$2b$12$0He7CQ2NQeoypM5120NxaeQSSCpCq5zO0NoIBFW6AuwO.RwlIIQiC",
+        "password": "$2b$12$Zs6sIXQKORQhLHRd2Xauu.5oWyXx4lsZMyJ5DHrDWmTGiQ3utG7Qu",
         "userName": "shahram",
         "name": "shahram",
         "lastName": null,
         "email": null,
         "phoneNumber": null,
-        "createdAt": "2025-05-24T01:51:52.461642",
+        "createdAt": "2025-05-26T21:16:47.388339",
         "isActive": true,
         "deletedAt": null,
         "age": null,
         "userAccess": {
-            "isAdmin": false,
+            "isAdmin": true,
             "role": "user",
             "permissions": {
-                "addingBooks": false,
-                "editingBooks": false,
-                "removingBooks": false,
-                "manageUsers": false,
-                "manageAdmins": false
-            }
-        },
-        "addresses": {},
-        "books": [
-            {
-                "bookId": "1515",
-                "status": "borrowed",
-                "from": "2025-05-24",
-                "to": "2025-06-07",
-                "privacy": true
-            }
-        ]
-    },
-    "1000001": {
-        "password": "$2b$12$7AQ1iJx2O7xG.pmKAgzfme8GubAcZbv0kvFJNuuQ3d6VdqolkRxGa",
-        "userName": "mmmmmm",
-        "name": null,
-        "lastName": null,
-        "email": null,
-        "phoneNumber": null,
-        "createdAt": "2025-05-24T01:53:10.956919",
-        "isActive": true,
-        "deletedAt": null,
-        "age": null,
-        "userAccess": {
-            "isAdmin": false,
-            "role": "user",
-            "permissions": {
-                "addingBooks": false,
-                "editingBooks": false,
-                "removingBooks": false,
-                "manageUsers": false,
-                "manageAdmins": false
-            }
-        },
-        "addresses": {},
-        "books": []
-    },
-    "1000001": {
-        "password": "$2b$12$7AQ1iJx2O7xG.pmKAgzfme8GubAcZbv0kvFJNuuQ3d6VdqolkRxGa",
-        "userName": "mmmmmm",
-        "name": "mmmmmm",
-        "lastName": null,
-        "email": null,
-        "phoneNumber": null,
-        "createdAt": "2025-05-24T01:53:10.956919",
-        "isActive": true,
-        "deletedAt": null,
-        "age": null,
-        "userAccess": {
-            "isAdmin": false,
-            "role": "user",
-            "permissions": {
-                "addingBooks": false,
-                "editingBooks": false,
-                "removingBooks": false,
-                "manageUsers": false,
-                "manageAdmins": false
+                "addingBooks": true,
+                "editingBooks": true,
+                "removingBooks": true,
+                "manageUsers": true,
+                "manageAdmins": true
             }
         },
         "addresses": {},

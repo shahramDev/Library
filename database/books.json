@@ -1,18 +1,18 @@
 {
     "1515": {
-        "title": "hi",
+        "title": "Hi",
         "author": "me",
         "publisher": "you",
         "publishYear": "2000",
-        "abstract": "hello",
+        "abstract": "Hello",
         "pages": "1",
         "language": "en",
-        "contentType": "comody",
-        "usageType": "refrence",
+        "contentType": "sf",
+        "usageType": "sf",
         "genres": [
-            "fiction"
+            "sf"
         ],
-        "availableCopies": "5",
-        "totalCopies": "15"
+        "availableCopies": "15",
+        "totalCopies": "20"
     }
 }
