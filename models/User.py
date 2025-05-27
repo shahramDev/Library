@@ -9,7 +9,7 @@ class User:
     database = 'database/users.json'
     lockFile = database + '.lock'
 
-    def __init__(self, userId, user = None):
+    def __init__(self, userId, user: dict = None ):
         self.user = user
         self.userId = userId
 
@@ -35,7 +35,7 @@ class User:
                 return cls(uid, data)
         return None
     
-    def saveDatabase(self, users):
+    def saveDatabase(self, users: dict):
         with open(self.database, 'w') as database:
             json.dump(users, database, indent=4)
 
