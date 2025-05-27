@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 
 class UserController:
 
-    def __init__(self,user):
+    def __init__(self,user: User):
         self.user = user
 
     @classmethod

@@ -7,7 +7,7 @@ class Book:
     database = 'database/books.json'
     lockFile = database + '.lock'
 
-    def __init__(self, bookId, bookData=None):
+    def __init__(self, bookId, bookData:dict = None):
         self.bookId = bookId
         self.book = bookData
 
@@ -22,7 +22,7 @@ class Book:
                 return json.load(database)
 
     
-    def saveBooks(self, books):
+    def saveBooks(self, books: dict):
         lock = FileLock(self.lockFile)
         with lock:
             with open(self.database, 'w') as database:

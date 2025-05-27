@@ -7,7 +7,7 @@ from core.ErrorHandling import (
 
 class BookController:
 
-    def __init__(self, book):
+    def __init__(self, book: Book):
         self.book = book
 
     @classmethod
